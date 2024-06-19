@@ -3,13 +3,7 @@
  * There should be no reason to make any changes to this file.
  */
 
-interface Page {
-  root: HTMLElement;
-  pageWillUnload?(): void;
-  pagDidLoad?(): void;
-}
-
-type CreatePageFn = () => Page;
+import { CreatePageFn, Page } from './router';
 
 function pageLoader() {
   let currentPage: Page | null = null;
@@ -33,7 +27,7 @@ function pageLoader() {
     window.scrollTo(0, 0);
 
     // Call optional pagDidLoad lifecycle method.
-    currentPage.pagDidLoad?.();
+    currentPage?.pageDidLoad?.();
   };
 }
 

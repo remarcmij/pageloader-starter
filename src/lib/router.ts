@@ -5,7 +5,27 @@
 
 import logger from './logger.js';
 
-function navigateTo(path, ...params) {
+export type CreatePageFn<T = any> = (props?: T) => Page;
+
+export interface Route {
+  path: string;
+  page: CreatePageFn;
+  default?: boolean;
+}
+
+export interface Page {
+  root: HTMLElement;
+  pageDidLoad?: () => void;
+  pageWillUnload?: () => void;
+}
+
+interface RouterState {
+  routes: Route[];
+  pageRoot: HTMLElement;
+  currentPage?: Page;
+}
+
+function navigateTo(path: string, ...params: any) {
   // Example:
   // navigateTo('repos', 'HackYourFuture', 'my-repo') => '#repos/HackYourFuture/my-repo'
   logger.silly('navigateTo', 'path:', path, 'params:', [...params]);
@@ -21,7 +41,7 @@ function getRouteParts() {
   return [path, ...rest];
 }
 
-function getDefaultRoute(routes) {
+function getDefaultRoute(routes: Route[]) {
   const defaultRoute = routes.find((route) => route.default);
   if (!defaultRoute) {
     throw new Error('Missing default route in routes table');
@@ -29,11 +49,11 @@ function getDefaultRoute(routes) {
   return defaultRoute;
 }
 
-function findRouteByPathname(routes, pathname) {
+function findRouteByPathname(routes: Route[], pathname: string) {
   return routes.find((route) => route.path === pathname);
 }
 
-async function onHashChange(routerState) {
+async function onHashChange(routerState: RouterState) {
   const { routes, pageRoot, currentPage } = routerState;
 
   const [pathname, ...params] = getRouteParts();
@@ -48,7 +68,7 @@ async function onHashChange(routerState) {
   }
 
   // Call optional willUnmount lifecycle method.
-  if (currentPage.pageWillUnload) {
+  if (currentPage?.pageWillUnload) {
     logger.silly('router', 'calling pageWillUnload()');
     currentPage.pageWillUnload();
   }
@@ -90,7 +110,7 @@ async function onHashChange(routerState) {
   routerState.currentPage = newPage;
 }
 
-function logRoutesTable(routes) {
+function logRoutesTable(routes: Route[]) {
   if (logger.isMinLevel('debug')) {
     // Log the routes table to the console
     console.log('Routes Table:');
@@ -103,15 +123,14 @@ function logRoutesTable(routes) {
 }
 
 function createRouter() {
-  let routerState;
+  let routerState: RouterState;
 
-  const start = (routes, pageRoot) => {
+  const start = (routes: Route[], pageRoot: HTMLElement) => {
     logRoutesTable(routes);
 
     routerState = {
       routes,
       pageRoot,
-      currentPage: {},
     };
 
     window.addEventListener('hashchange', () => onHashChange(routerState));
