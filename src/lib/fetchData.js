@@ -12,7 +12,9 @@ const HTTP_STATUS_NO_CONTENT = 204;
  * @param {string} url
  */
 export async function fetchData(url) {
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    headers: { accept: 'application/vnd.github+json' },
+  });
   if (!res.ok) {
     throw new Error(`HTTP ${res.status}  ${res.statusText}`);
   }
