@@ -9,9 +9,8 @@ const HTTP_STATUS_NO_CONTENT = 204;
 
 /**
  * Fetch JSON data from the given URL.
- * @param {string} url
  */
-export async function fetchData(url) {
+export async function fetchData(url: string): Promise<any> {
   const res = await fetch(url, {
     headers: { accept: 'application/vnd.github+json' },
   });
@@ -27,15 +26,16 @@ export async function fetchData(url) {
   return data;
 }
 
-const cache = {};
+type CacheEntry = {time: Date, value: any};
+const cache: {[url: string]: CacheEntry} = {};
+
 const CACHE_INTERVAL_MSECS = 5000;
 const CACHE_MAX_AGE_MSECS = 1000 * 60 * 60; // 1 hour
 
 /**
  * Fetch JSON data from the given URL, caching the result.
- * @param {string} url
  */
-export async function fetchCached(url) {
+export async function fetchCached(url: string): Promise<any> {
   const node = cache[url];
   if (node) {
     logger.silly('fetchData', 'cache hit:', url);
@@ -50,11 +50,11 @@ export async function fetchCached(url) {
 }
 
 // Adapted from: https://dev.to/rajeshroyal/cache-api-in-javascript-with-just-20-lines-of-code-49kg
-setInterval(function () {
+setInterval( () => {
   if (Object.keys(cache).length > 0) {
     const now = Date.now();
     Object.keys(cache).forEach((key) => {
-      const msecs = now - cache[key].time;
+      const msecs = now - cache[key].time.getTime();
 
       if (msecs > CACHE_MAX_AGE_MSECS) {
         delete cache[key];

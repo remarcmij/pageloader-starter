@@ -2,23 +2,25 @@
  * This file is provided ready-made for use in your application by HackYourFuture.
  * There should be no reason to make any changes to this file.
  */
-function createObservableState(initialState = {}) {
+
+type Subscriber = {
+  update(state: any, prevState: any): void;
+};
+
+function createObservableState(initialState: any = {}) {
   let state = { ...initialState };
 
-  const subscribers = new Set();
+  const subscribers: Set<Subscriber> = new Set();
 
-  const subscribe = (subscriber) => {
-    if (!('update' in subscriber)) {
-      throw new Error('Subscriber must implement update(state)');
-    }
+  const subscribe = (subscriber: Subscriber) => {
     subscribers.add(subscriber);
   };
 
-  const unsubscribe = (subscriber) => {
+  const unsubscribe = (subscriber: Subscriber) => {
     subscribers.delete(subscriber);
   };
 
-  const update = (updates) => {
+  const update = (updates: any) => {
     const prevState = state;
     state = { ...prevState, ...updates };
     subscribers.forEach((subscriber) => subscriber.update(state, prevState));
@@ -29,7 +31,7 @@ function createObservableState(initialState = {}) {
     return state;
   };
 
-  const set = (nextState) => {
+  const set = (nextState: any) => {
     state = { ...nextState };
   };
 

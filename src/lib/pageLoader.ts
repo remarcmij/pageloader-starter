@@ -2,18 +2,30 @@
  * This file is provided ready-made for use in your application by HackYourFuture.
  * There should be no reason to make any changes to this file.
  */
-function pageLoader() {
-  let currentPage = {};
 
-  return (createPageFn) => {
+interface Page {
+  root: HTMLElement;
+  pageWillUnload?(): void;
+  pagDidLoad?(): void;
+}
+
+type CreatePageFn = () => Page;
+
+function pageLoader() {
+  let currentPage: Page | null = null;
+
+  return (createPageFn: CreatePageFn) => {
     // Call optional pageWillUnload lifecycle method.
-    currentPage.pageWillUnload?.();
+    currentPage?.pageWillUnload?.();
 
     // Create the new page.
     currentPage = createPageFn();
 
     // Mount the new page, replacing any previous page.
     const appRoot = document.getElementById('app-root');
+    if (!appRoot) {
+      throw new Error('No element with id "app-root" found in the document');
+    }
     appRoot.innerHTML = '';
     appRoot.appendChild(currentPage.root);
 

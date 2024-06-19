@@ -4,20 +4,18 @@
  */
 
 // Log levels in increasing severity
-const LEVELS = ['silly', 'debug', 'info', 'warn', 'error', 'fatal', 'none'];
+type LogLevel = 'silly' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'none';
+const LEVELS: LogLevel[] = ['silly', 'debug', 'info', 'warn', 'error', 'fatal', 'none'];
 
-/**
- * Create a logger object.
- * @returns
- */
+
 function logger() {
   let minLevel = LEVELS.length - 1;
 
   // Check the requested level against the minimum level
-  const isMinLevel = (level) => LEVELS.indexOf(level) >= minLevel;
+  const isMinLevel = (level: LogLevel) => LEVELS.indexOf(level) >= minLevel;
 
   // The function that does the actual logging.
-  const log = (level, label, ...args) => {
+  const log = (level: LogLevel, label: string, ...args: any) => {
     if (!isMinLevel(level)) {
       return;
     }
@@ -38,13 +36,13 @@ function logger() {
         logFn = console.log;
     }
 
-    logFn(`${level}: ${label} =>`, ...args);
+    logFn(`${level}: [${label}]`, ...args);
   };
 
   // Return an object with convenience functions for logging at specific
   // log levels.
   return {
-    setLevel(level) {
+    setLevel(level: LogLevel) {
       const newLevel = LEVELS.indexOf(level);
       if (newLevel !== -1) {
         minLevel = newLevel;
@@ -55,22 +53,22 @@ function logger() {
     },
     isMinLevel,
     log,
-    silly(label, ...args) {
+    silly(label: string, ...args: any) {
       log('silly', label, ...args);
     },
-    debug(label, ...args) {
+    debug(label: string, ...args: any) {
       log('debug', label, ...args);
     },
-    info(label, ...args) {
+    info(label: string, ...args: any) {
       log('info', label, ...args);
     },
-    warn(label, ...args) {
+    warn(label: string, ...args: any) {
       log('warn', label, ...args);
     },
-    error(label, ...args) {
+    error(label: string, ...args: any) {
       log('error', label, ...args);
     },
-    fatal(label, ...args) {
+    fatal(label: string, ...args: any) {
       log('fatal', label, ...args);
     },
   };
