@@ -1,5 +1,3 @@
-import checkedQuerySelector from '../lib/checkedQuerySelector';
-
 type AppState = {
   count: number;
 };
@@ -23,16 +21,14 @@ function createHomeView(props: HomeViewProps) {
       <button id="increment-btn">Increment</button>
     </div>`;
 
-  const counter = checkedQuerySelector(root, '#counter');
+  const counter = root.querySelector('#counter') as HTMLElement;
 
-  const decrementBtn = checkedQuerySelector(
-    root,
+  const decrementBtn = root.querySelector(
     '#decrement-btn'
   ) as HTMLButtonElement;
   decrementBtn.addEventListener('click', props.onDecrement);
 
-  const incrementBtn = checkedQuerySelector(
-    root,
+  const incrementBtn = root.querySelector(
     '#increment-btn'
   ) as HTMLButtonElement;
   incrementBtn.addEventListener('click', props.onIncrement);
